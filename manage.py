@@ -1,5 +1,13 @@
 import os
 import sys
+from database_manager import DataBaseManager
+from dotenv import load_dotenv
+
+load_dotenv()
+
+db_manager = DataBaseManager()
+
+db_manager.connect()
 
 
 def main():
