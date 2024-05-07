@@ -13,7 +13,8 @@ class PerevalAdded(models.Model):
     spring_level = models.CharField(max_length=10)
     coord_id = models.IntegerField()
     user_id = models.IntegerField()
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, default='new')
+
 
 class PerevalImages(models.Model):
     title = models.CharField(max_length=100)
