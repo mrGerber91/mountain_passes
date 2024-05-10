@@ -12,7 +12,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+# Конфигурация приложений Django
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -36,6 +36,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'mountain_passes_project.urls'
 
+# Пути к шаблонам Django
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -55,15 +56,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mountain_passes_project.wsgi.application'
 
-
+# Подключение к базе данных PostgreSQL с использованием переменных окружения
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'mountain_passes',
-        'USER': os.getenv('FSTR_DB_LOGIN'),
-        'PASSWORD': os.getenv('FSTR_DB_PASS'),
-        'HOST': os.getenv('FSTR_DB_HOST'),
-        'PORT': os.getenv('FSTR_DB_PORT'),
+        'USER': os.getenv('FSTR_DB_LOGIN'), # Имя пользователя для подключения к БД
+        'PASSWORD': os.getenv('FSTR_DB_PASS'), # Пароль для подключения к БД
+        'HOST': os.getenv('FSTR_DB_HOST'), # Хост, на котором расположена БД
+        'PORT': os.getenv('FSTR_DB_PORT'), # Порт для подключения к БД
     }
 }
 

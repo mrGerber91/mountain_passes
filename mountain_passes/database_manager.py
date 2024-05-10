@@ -2,6 +2,7 @@ import os
 import psycopg2
 from psycopg2 import sql
 
+# Менеджер базы данных PostgreSQL
 class DataBaseManager:
     def __init__(self):
         # Получаем параметры подключения к базе данных из переменных окружения
