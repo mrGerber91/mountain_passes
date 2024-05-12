@@ -52,3 +52,9 @@ def edit_data(request, id):
     except PerevalAdded.DoesNotExist:
         return Response({"state": 0, "message": "Запись не найдена"}, status=status.HTTP_404_NOT_FOUND)
 
+@api_view(['GET'])
+def get_user_data(request):
+    email = request.GET.get('user__email', '')
+    user_data = PerevalAdded.objects.filter(user__email=email)
+    serializer = PerevalAddedSerializer(user_data, many=True)
+    return Response(serializer.data)
