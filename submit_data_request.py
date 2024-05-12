@@ -8,8 +8,8 @@ data = {
     "beauty_title": "пер.",
     "title": "Пхия",
     "other_titles": "Триев",
-    "connect": "",
-    "add_time": "2021-09-22 13:18:13",
+    "connect": "123",
+    "add_time": "2024-09-22 19:13:59",
     "user": {
         "email": "qwerty@mail.ru",
         "fam": "Пупкин",
@@ -23,19 +23,22 @@ data = {
         "height": "1200"
     },
     "level": {
-        "winter": "",
+        "winter": "1A",
         "summer": "1А",
         "autumn": "1А",
-        "spring": ""
+        "spring": "1A"
     },
-    "images": [
-        {"data": "<картинка1>", "title": "Седловина"},
-        {"data": "<картинка>", "title": "Подъём"}
-    ]
+    "images": []
 }
 
 # Отправляем POST запрос
 response = requests.post(url, json=data)
+
+if response.status_code == 200 and response.text:
+    # Выводим результат
+    print(response.json())
+else:
+    print("Ошибка при получении данных:", response.status_code)
 
 # Выводим результат
 print(response.json())
