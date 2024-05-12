@@ -1,7 +1,15 @@
 from django.db import models
 from django.utils import timezone
 
+class Users(models.Model):
+    email = models.EmailField()
+    fam = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    otc = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20)
+
 class PerevalAdded(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
     beauty_title = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
@@ -23,9 +31,3 @@ class PerevalImages(models.Model):
     data = models.ImageField()
     title = models.CharField(max_length=100)
 
-class Users(models.Model):
-    email = models.EmailField()
-    fam = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-    otc = models.CharField(max_length=100)
-    phone = models.CharField(max_length=20)
