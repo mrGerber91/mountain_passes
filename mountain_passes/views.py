@@ -27,3 +27,13 @@ def submit_data(request):
         "message": "Ошибка при выполнении операции",
         "id": None
     })
+
+@api_view(['GET'])
+def get_single_data(request, id):
+    try:
+        pereval = PerevalAdded.objects.get(id=id)
+        serializer = PerevalAddedSerializer(pereval)
+        return Response(serializer.data)
+    except PerevalAdded.DoesNotExist:
+        return Response({"message": "Запись не найдена"}, status=status.HTTP_404_NOT_FOUND)
+
