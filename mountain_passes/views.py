@@ -37,3 +37,18 @@ def get_single_data(request, id):
     except PerevalAdded.DoesNotExist:
         return Response({"message": "Запись не найдена"}, status=status.HTTP_404_NOT_FOUND)
 
+
+@api_view(['PATCH'])
+def edit_data(request, id):
+    try:
+        pereval = PerevalAdded.objects.get(id=id)
+        if pereval.status == 'new':
+            serializer = PerevalAddedSerializer(pereval, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"state": 1, "message": "Успешно отредактировано"})
+            return Response({"state": 0, "message": "Неверные данные для редактирования"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"state": 0, "message": "Нельзя редактировать запись"}, status=status.HTTP_403_FORBIDDEN)
+    except PerevalAdded.DoesNotExist:
+        return Response({"state": 0, "message": "Запись не найдена"}, status=status.HTTP_404_NOT_FOUND)
+
