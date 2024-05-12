@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import PerevalAdded
 from .serializers import PerevalAddedSerializer
+from rest_framework import viewsets, filters
 
 
 @api_view(['POST', 'GET'])
@@ -67,3 +68,9 @@ def get_user_data(request):
     user_data = PerevalAdded.objects.filter(user__email=email)
     serializer = PerevalAddedSerializer(user_data, many=True)
     return Response(serializer.data)
+
+class PerevalAddedViewSet(viewsets.ModelViewSet):
+    queryset = PerevalAdded.objects.all()
+    serializer_class = PerevalAddedSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'beauty_title', 'other_titles']

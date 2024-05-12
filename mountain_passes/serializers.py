@@ -33,3 +33,7 @@ class PerevalAddedSerializer(serializers.Serializer):
     coords = CoordSerializer()
     level = LevelSerializer()
     images = ImageSerializer(many=True)
+
+    class Meta:
+        model = PerevalAdded
+        fields = '__all__'
