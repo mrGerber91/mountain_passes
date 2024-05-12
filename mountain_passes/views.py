@@ -6,24 +6,33 @@ from .models import PerevalAdded
 from .serializers import PerevalAddedSerializer
 
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 def submit_data(request):
     if request.method == 'POST':
         serializer = PerevalAddedSerializer(data=request.data)
         if serializer.is_valid():
             pereval_added = serializer.save()
             return Response({
-                "status": HTTP_200_OK,
+                "status": status.HTTP_200_OK,
                 "message": "Отправлено успешно",
                 "id": pereval_added.id
             })
         return Response({
-            "status": HTTP_400_BAD_REQUEST,
+            "status": status.HTTP_400_BAD_REQUEST,
             "message": "Bad Request",
             "id": None
         })
+
+    elif request.method == 'GET':
+        # Ваша логика для обработки GET запроса
+        return Response({
+            "status": status.HTTP_200_OK,
+            "message": "GET запрос успешно обработан",
+            "id": None
+        })
+
     return Response({
-        "status": HTTP_500_INTERNAL_SERVER_ERROR,
+        "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
         "message": "Ошибка при выполнении операции",
         "id": None
     })
