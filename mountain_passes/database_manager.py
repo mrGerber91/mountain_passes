@@ -1,11 +1,14 @@
+from django.contrib.contenttypes.models import ContentType
 import os
+from dotenv import load_dotenv
+from .models import Users
 import psycopg2
-from psycopg2 import sql
 
-# Менеджер базы данных PostgreSQL
+load_dotenv()
+
 class DataBaseManager:
     def __init__(self):
-        # Получаем параметры подключения к базе данных из переменных окружения
+        # Инициализация параметров подключения
         self.db_host = os.getenv('FSTR_DB_HOST')
         self.db_port = os.getenv('FSTR_DB_PORT')
         self.db_login = os.getenv('FSTR_DB_LOGIN')
@@ -27,71 +30,61 @@ class DataBaseManager:
             print(f"Unable to connect to the database: {e}")
 
     def close(self):
-        # Закрытие соединения с базой данных
         self.cur.close()
         self.conn.close()
 
-    def add_pereval(self, data):
-        # Метод для добавления нового перевала в базу данных
+    def get_new_perevals(self):
+        self.cur.execute("SELECT * FROM PerevalAdded WHERE status='new'")
+        new_perevals = self.cur.fetchall()
+        return new_perevals
+
+    def update_pereval_status(self, pereval_id, new_status):
         try:
-            # При добавлении новой строки в таблицу с перевалами устанавливаем значение поля status равным new
-            sql_query = sql.SQL("INSERT INTO pereval_added (date_added, beauty_title, title, "
-                                "other_titles, connect, add_time, winter_level, summer_level, "
-                                "autumn_level, spring_level, coord_id, user_id, status) "
-                                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
-            self.cur.execute(sql_query, data)
+            self.cur.execute("UPDATE PerevalAdded SET status=%s WHERE id=%s", (new_status, pereval_id))
             self.conn.commit()
-            print("Pereval added successfully")
+            print(f"Status for Pereval {pereval_id} updated to {new_status}")
         except Exception as e:
-            self.conn.rollback()
-            print(f"Unable to add pereval: {e}")
+            print(f"Error updating status: {e}")
 
-    def add_image(self, title):
-        # Метод для добавления нового изображения в базу данных
-        try:
-            sql_query = sql.SQL("INSERT INTO pereval_images (title) VALUES (%s)")
-            self.cur.execute(sql_query, (title,))
-            self.conn.commit()
-            print("Image added successfully")
-        except Exception as e:
-            self.conn.rollback()
-            print(f"Unable to add image: {e}")
+    def create_user(self, email, fam, name, otc, phone):
+        user = Users.objects.create(email=email, fam=fam, name=name, otc=otc, phone=phone)
+        return user
 
-    def add_user(self, email, fam, name, otc):
-        # Метод для добавления нового пользователя в базу данных
-        try:
-            sql_query = sql.SQL("INSERT INTO users (email, fam, name, otc) VALUES (%s, %s, %s, %s)")
-            self.cur.execute(sql_query, (email, fam, name, otc))
-            self.conn.commit()
-            print("User added successfully")
-        except Exception as e:
-            self.conn.rollback()
-            print(f"Unable to add user: {e}")
+    def add_pereval(self, user_id, beauty_title, title, other_titles, connect, add_time, winter_level, summer_level,
+                    autumn_level, spring_level, latitude, longitude, height):
+        user = Users.objects.get(id=user_id)
+        coord = Coord.objects.create(latitude=latitude, longitude=longitude, height=height)
+        pereval = PerevalAdded.objects.create(user=user, beauty_title=beauty_title, title=title, other_titles=other_titles,
+                                              connect=connect, add_time=add_time, winter_level=winter_level, summer_level=summer_level,
+                                              autumn_level=autumn_level, spring_level=spring_level, coord=coord)
+        return pereval
 
-    def moderate_pereval(self, pereval_id, status):
-        # Метод для изменения статуса модерации перевала
-        try:
-            sql_query = sql.SQL("UPDATE pereval_added SET status = %s WHERE id = %s")
-            self.cur.execute(sql_query, (status, pereval_id))
-            self.conn.commit()
-            print("Pereval status updated successfully")
-        except Exception as e:
-            self.conn.rollback()
-            print(f"Unable to update pereval status: {e}")
+    def add_pereval_image(self, pereval_id, data, title):
+        pereval_model = ContentType.objects.get_for_model(PerevalAdded)
+        pereval = pereval_model.model_class().objects.get(id=pereval_id)
+        image = PerevalImages.objects.create(pereval_added=pereval, data=data, title=title)
+        return image
 
-    def close_connection(self):
-        # Метод для закрытия соединения с базой данных
-        self.cur.close()
-        self.conn.close()
-        print("Connection to the database closed")
+    def get_pereval_images(self, pereval_id):
+        pereval_model = ContentType.objects.get_for_model(PerevalAdded)
+        pereval = pereval_model.model_class().objects.get(id=pereval_id)
+        return PerevalImages.objects.filter(pereval_added=pereval)
 
-    def get_all_perevals(self):
-        # Метод для получения списка всех перевалов из базы данных
-        try:
-            self.cur.execute("SELECT * FROM pereval_added")
-            perevals = self.cur.fetchall()
-            print("All perevals retrieved successfully")
-            return perevals
-        except Exception as e:
-            print(f"Unable to retrieve all perevals: {e}")
-            return None
+    def get_user_perevals(self, email):
+        user = Users.objects.get(email=email)
+        return PerevalAdded.objects.filter(user=user)
+
+    def edit_pereval(self, pereval_id, data):
+        pereval = PerevalAdded.objects.get(id=pereval_id)
+        for key, value in data.items():
+            setattr(pereval, key, value)
+        pereval.save()
+        return pereval
+
+    def delete_pereval(self, pereval_id):
+        pereval = PerevalAdded.objects.get(id=pereval_id)
+        pereval.delete()
+
+    def delete_pereval_image(self, image_id):
+        image = PerevalImages.objects.get(id=image_id)
+        image.delete()
