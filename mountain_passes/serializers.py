@@ -8,6 +8,10 @@ class UserSerializer(serializers.Serializer):
     otc = serializers.CharField()
     phone = serializers.CharField()
 
+    class Meta:
+        model = Users
+        fields = '__all__'
+
 class CoordSerializer(serializers.Serializer):
     latitude = serializers.CharField()
     longitude = serializers.CharField()
@@ -23,7 +27,7 @@ class ImageSerializer(serializers.Serializer):
     data = serializers.ImageField()
     title = serializers.CharField()
 
-class PerevalAddedSerializer(serializers.Serializer):
+class PerevalAddedSerializer(serializers.ModelSerializer):
     beauty_title = serializers.CharField()
     title = serializers.CharField()
     other_titles = serializers.CharField()
