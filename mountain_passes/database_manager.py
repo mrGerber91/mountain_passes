@@ -22,7 +22,7 @@ class DataBaseManager:
                 port=self.db_port,
                 user=self.db_login,
                 password=self.db_pass,
-                database='mountain_passes'  # Имя базы данных
+                database='default_db'  # Имя базы данных
             )
             self.cur = self.conn.cursor()
             print("Connected to the database")

@@ -61,11 +61,11 @@ WSGI_APPLICATION = 'mountain_passes_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mountain_passes',
+        'NAME': 'default_db',
         'USER': os.getenv('FSTR_DB_LOGIN'), # Имя пользователя для подключения к БД
         'PASSWORD': os.getenv('FSTR_DB_PASS'), # Пароль для подключения к БД
         'HOST': os.getenv('FSTR_DB_HOST'), # Хост, на котором расположена БД
-        'PORT': os.getenv('FSTR_DB_PORT'), # Порт для подключения к БД
+        'PORT': "5432", # Порт для подключения к БД
     }
 }
 
@@ -95,6 +95,10 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

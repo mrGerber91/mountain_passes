@@ -1,7 +1,7 @@
 import requests
 
 # URL вашего API
-url = 'http://127.0.0.1:8000/api/submitData/'
+url = 'http://django1991.pythonanywhere.com/api/submitData/'
 
 # JSON данные для отправки
 data = {
