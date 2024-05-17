@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="mountain_passes@localhost" uuid="bb0d658a-a073-4e85-8036-6fa633b910fd">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5433/mountain_passes</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
     <data-source source="LOCAL" name="Django default" uuid="ccd5bd46-e0d0-4f49-9d30-f2a8018c80fa">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
