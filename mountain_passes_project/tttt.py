@@ -3,11 +3,11 @@ import psycopg2
 try:
     # Установка соединения с базой данных PostgreSQL
     conn = psycopg2.connect(
-        dbname="mountain_passes",
-        user="postgres",
-        password="123321",
-        host="localhost",
-        port="5433"
+        dbname="default_db",
+        user="gen_user",
+        password="passespassespasses",
+        host="82.97.254.78",
+        port="5432"
     )
     cur = conn.cursor()
 
