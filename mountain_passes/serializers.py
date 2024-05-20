@@ -1,21 +1,15 @@
 from rest_framework import serializers
-from .models import PerevalAdded, PerevalImages, Users
+from .models import PerevalAdded, PerevalImages, Users, Coord
 
-class UserSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    fam = serializers.CharField()
-    name = serializers.CharField()
-    otc = serializers.CharField()
-    phone = serializers.CharField()
-
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = '__all__'
 
-class CoordSerializer(serializers.Serializer):
-    latitude = serializers.CharField()
-    longitude = serializers.CharField()
-    height = serializers.CharField()
+class CoordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Coord
+        fields = '__all__'
 
 class LevelSerializer(serializers.Serializer):
     winter = serializers.CharField()
@@ -23,21 +17,23 @@ class LevelSerializer(serializers.Serializer):
     autumn = serializers.CharField()
     spring = serializers.CharField()
 
-class ImageSerializer(serializers.Serializer):
-    data = serializers.ImageField()
-    title = serializers.CharField()
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PerevalImages
+        fields = '__all__'
 
 class PerevalAddedSerializer(serializers.ModelSerializer):
-    beauty_title = serializers.CharField()
-    title = serializers.CharField()
-    other_titles = serializers.CharField()
-    connect = serializers.CharField()
-    add_time = serializers.DateTimeField()
     user = UserSerializer()
-    coords = CoordSerializer()
-    level = LevelSerializer()
-    images = ImageSerializer(many=True)
+    coord = CoordSerializer()
 
     class Meta:
         model = PerevalAdded
         fields = '__all__'
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        coord_data = validated_data.pop('coord')
+        user = Users.objects.create(**user_data)
+        coord = Coord.objects.create(**coord_data)
+        pereval = PerevalAdded.objects.create(user=user, coord=coord, **validated_data)
+        return pereval

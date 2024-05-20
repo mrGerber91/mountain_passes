@@ -61,7 +61,7 @@ WSGI_APPLICATION = 'mountain_passes_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'default_db',
+        'NAME': 'mountain_passes',
         'USER': os.getenv('FSTR_DB_LOGIN'), # Имя пользователя для подключения к БД
         'PASSWORD': os.getenv('FSTR_DB_PASS'), # Пароль для подключения к БД
         'HOST': os.getenv('FSTR_DB_HOST'), # Хост, на котором расположена БД

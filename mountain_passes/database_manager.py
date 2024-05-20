@@ -1,7 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
+from .models import Users, Coord, PerevalAdded, PerevalImages
 import os
 from dotenv import load_dotenv
-from .models import Users
 import psycopg2
 
 load_dotenv()
@@ -13,6 +13,7 @@ class DataBaseManager:
         self.db_port = os.getenv('FSTR_DB_PORT')
         self.db_login = os.getenv('FSTR_DB_LOGIN')
         self.db_pass = os.getenv('FSTR_DB_PASS')
+        self.cur = None
 
     def connect(self):
         # Установка соединения с базой данных
@@ -22,7 +23,7 @@ class DataBaseManager:
                 port=self.db_port,
                 user=self.db_login,
                 password=self.db_pass,
-                database='default_db'  # Имя базы данных
+                database='mountain_passes'  # Имя базы данных
             )
             self.cur = self.conn.cursor()
             print("Connected to the database")
@@ -30,7 +31,8 @@ class DataBaseManager:
             print(f"Unable to connect to the database: {e}")
 
     def close(self):
-        self.cur.close()
+        if self.cur:  # Проверка, что self.cur был инициализирован
+            self.cur.close()
         self.conn.close()
 
     def get_new_perevals(self):
@@ -60,14 +62,12 @@ class DataBaseManager:
         return pereval
 
     def add_pereval_image(self, pereval_id, data, title):
-        pereval_model = ContentType.objects.get_for_model(PerevalAdded)
-        pereval = pereval_model.model_class().objects.get(id=pereval_id)
+        pereval = PerevalAdded.objects.get(id=pereval_id)
         image = PerevalImages.objects.create(pereval_added=pereval, data=data, title=title)
         return image
 
     def get_pereval_images(self, pereval_id):
-        pereval_model = ContentType.objects.get_for_model(PerevalAdded)
-        pereval = pereval_model.model_class().objects.get(id=pereval_id)
+        pereval = PerevalAdded.objects.get(id=pereval_id)
         return PerevalImages.objects.filter(pereval_added=pereval)
 
     def get_user_perevals(self, email):

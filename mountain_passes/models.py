@@ -13,7 +13,6 @@ class Coord(models.Model):
     longitude = models.CharField(max_length=50)
     height = models.CharField(max_length=50)
 
-
 class PerevalAdded(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -28,10 +27,6 @@ class PerevalAdded(models.Model):
     spring_level = models.CharField(max_length=100)
     coord = models.ForeignKey(Coord, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, default='new')
-
-    class Meta:
-        db_table = 'pereval_added'
-
 
 class PerevalImages(models.Model):
     pereval_added = models.ForeignKey(PerevalAdded, related_name='images', on_delete=models.CASCADE)

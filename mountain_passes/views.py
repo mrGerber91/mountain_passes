@@ -1,11 +1,9 @@
 from rest_framework import status
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import PerevalAdded
 from .serializers import PerevalAddedSerializer
 from rest_framework import viewsets, filters
-
 
 @api_view(['POST', 'GET'])
 def submit_data(request):
@@ -18,10 +16,12 @@ def submit_data(request):
                 "message": "Отправлено успешно",
                 "id": pereval_added.id
             })
+        print("Errors:", serializer.errors)  # Логирование ошибок
         return Response({
             "status": status.HTTP_400_BAD_REQUEST,
             "message": "Bad Request",
-            "id": None
+            "id": None,
+            "errors": serializer.errors  # Возврат ошибок для отладки
         })
     elif request.method == 'GET':
         email = request.GET.get('user__email', '')
@@ -35,18 +35,18 @@ def submit_data(request):
     })
 
 @api_view(['GET'])
-def get_single_data(request, id):
+def get_single_data(request, pk):
     try:
-        pereval = PerevalAdded.objects.get(id=id)
+        pereval = PerevalAdded.objects.get(id=pk)
         serializer = PerevalAddedSerializer(pereval)
         return Response(serializer.data)
     except PerevalAdded.DoesNotExist:
         return Response({"message": "Запись не найдена"}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['PATCH'])
-def edit_data(request, id):
+def edit_data(request, pk):
     try:
-        pereval = PerevalAdded.objects.get(id=id)
+        pereval = PerevalAdded.objects.get(id=pk)
         if pereval.status == 'new':
             serializer = PerevalAddedSerializer(pereval, data=request.data, partial=True)
             if serializer.is_valid():
@@ -64,8 +64,14 @@ def get_user_data(request):
     serializer = PerevalAddedSerializer(user_data, many=True)
     return Response(serializer.data)
 
+
 class PerevalAddedViewSet(viewsets.ModelViewSet):
     queryset = PerevalAdded.objects.all()
     serializer_class = PerevalAddedSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'beauty_title', 'other_titles']
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        response.status_code = status.HTTP_201_CREATED
+        return response
